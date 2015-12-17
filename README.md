@@ -12,8 +12,9 @@ This committer uses the [Jest library](https://github.com/searchbox-io/Jest) as 
 
 ## Status
 
-Though we are using this library in production, it is not currently
-tested by an automated test suite. Proceed with caution!
+Though we are using this library in production, it is not currently tested by an automated test suite. Proceed with caution!
+
+This project is not currently deployed to any central repository. You must build it manually. Nor does a hosted documentation exist (other than this README).
 
 ## Usage / Configuration
 
