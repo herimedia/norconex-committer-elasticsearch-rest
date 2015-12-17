@@ -1,6 +1,4 @@
 <!--
-   Copyright 2013-2015 Norconex Inc.
-
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
    You may obtain a copy of the License at
@@ -14,21 +12,21 @@
    limitations under the License.
   -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
   http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.norconex.collectors</groupId>
-	<artifactId>norconex-committer-elasticsearch</artifactId>
-	<version>2.0.1</version>
+	<groupId>com.norconex.committers</groupId>
+	<artifactId>norconex-committer-elasticsearch-rest</artifactId>
+	<version>0.0.1</version>
 	<name>Norconex Committer Elasticsearch REST</name>
 
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>    
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<site.baseurl />
 	</properties>
-	<inceptionYear>2013</inceptionYear>
+	<inceptionYear>2015</inceptionYear>
 
     <licenses>
       <license>
@@ -48,7 +46,7 @@
         <snapshots>
           <enabled>true</enabled>
         </snapshots>
-      </repository> 
+      </repository>
     </repositories>
 
 
@@ -59,9 +57,9 @@
 			<version>4.12</version>
 		</dependency>
 		<dependency>
-			<groupId>org.elasticsearch</groupId>
-			<artifactId>elasticsearch</artifactId>
-			<version>1.5.0</version>
+			<groupId>io.searchbox</groupId>
+			<artifactId>jest</artifactId>
+			<version>2.0.0</version>
 		</dependency>
 		<dependency>
 			<groupId>com.norconex.collectors</groupId>
@@ -101,7 +99,7 @@
                     <include>**</include>
                 </includes>
             </resource>
-        </resources>  
+        </resources>
 		<extensions>
 			<extension>
 				<groupId>org.apache.maven.wagon</groupId>
@@ -144,7 +142,7 @@
                       <artifactId>doxia-module-markdown</artifactId>
                       <version>1.4</version>
                     </dependency>
-                  </dependencies>               
+                  </dependencies>
               </plugin>
 			</plugins>
 		</pluginManagement>
@@ -295,14 +293,14 @@
                 <nexusUrl>https://oss.sonatype.org/</nexusUrl>
                 <autoReleaseAfterClose>false</autoReleaseAfterClose>
               </configuration>
-            </plugin>    
+            </plugin>
 		</plugins>
 	</build>
 
 	<distributionManagement>
 		<site>
 			<id>norconex-site-deployment</id>
-			<url>${site.baseurl}/collectors/committer-elasticsearch/latest</url>
+			<url>${site.baseurl}/collectors/committer-elasticsearch-rest/latest</url>
 		</site>
         <snapshotRepository>
           <id>ossrh</id>
@@ -311,7 +309,7 @@
         <repository>
           <id>ossrh</id>
           <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-        </repository>    
+        </repository>
 	</distributionManagement>
 
 	<reporting>
@@ -336,28 +334,8 @@
               <version>2.9.1</version>
               <configuration>
                 <overview>${basedir}/src/main/javadoc/overview.html</overview>
-                <header><![CDATA[
-                  <style>div.aboutLanguage .siteLink {font-size: 2em;}</style>
-                  <span class="siteLink">
-                    <a target="_top" href="http://www.norconex.com/collectors/committer-elasticsearch">Norconex Elasticsearch Committer</a>
-                  </span>
-                  ]]>
-                </header>
                 <footer><![CDATA[
-                  <script type="text/javascript">
-                    var _gaq = _gaq || [];
-                    _gaq.push(['_setAccount', 'UA-23162620-1']);
-                    _gaq.push(['_setDomainName', 'norconex.com']);
-                    _gaq.push(['_trackPageview']);
-                    (function() {
-                      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-                      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-                      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-                    })();
-                  </script>
-                  <a style="font-size: 1.4em;" target="_top" href="https://github.com/norconex/committer-elasticsearch/issues">Submit an Issue</a>
-                  &nbsp;&nbsp;|&nbsp;&nbsp; 
-                  <a style="font-size: 1.4em;" target="_top" href="http://www.norconex.com">www.norconex.com</a>
+                  <a style="font-size: 1.4em;" target="_top" href="https://github.com/herimedia/norconex-committer-elasticsearch-rest/issues">Submit an Issue</a>
                   ]]>
                 </footer>
                 <show>protected</show>
@@ -378,45 +356,33 @@
 		</plugins>
 	</reporting>
 
-	<url>http://www.norconex.com/collectors/committer-elasticsearch</url>
+	<url>https://github.com/herimedia/norconex-committer-elasticsearch-rest</url>
 	<organization>
-		<name>Norconex Inc.</name>
-		<url>http://www.norconex.com</url>
+		<name>herimedia e.K., Köln</name>
+		<url>https://herimedia.com</url>
 	</organization>
 	<scm>
-		<url>https://github.com/Norconex/committer-elasticsearch</url>
-		<connection>scm:git:git@github.com:Norconex/committer-elasticsearch.git</connection>
-		<developerConnection>scm:git:git@github.com:Norconex/committer-elasticsearch.git</developerConnection>
+		<url>https://github.com/herimedia/norconex-committer-elasticsearch-rest</url>
+		<connection>scm:git:git@github.com:herimedia/norconex-committer-elasticsearch-rest.git</connection>
+		<developerConnection>scm:git:git@github.com:herimedia/norconex-committer-elasticsearch-rest.git</developerConnection>
 	</scm>
 	<issueManagement>
-		<url>https://github.com/Norconex/committer-elasticsearch/issues</url>
+		<url>https://github.com/herimedia/norconex-committer-elasticsearch-rest/issues</url>
 		<system>GitHub</system>
 	</issueManagement>
 
 	<developers>
-		<developer>
-			<id>dimassip</id>
-			<name>Pascal Dimassimo</name>
-			<email>pascal.dimassimo@norconex.com</email>
-			<organization>Norconex Inc.</organization>
-			<organizationUrl>http://www.norconex.com</organizationUrl>
-			<roles>
-				<role>project leader</role>
-				<role>developer</role>
-			</roles>
-			<timezone>-4</timezone>
-		</developer>
-        <developer>
-            <id>essiembre</id>
-            <name>Pascal Essiembre</name>
-            <email>pascal.essiembre@norconex.com</email>
-            <organization>Norconex Inc.</organization>
-            <organizationUrl>http://www.norconex.com</organizationUrl>
-            <roles>
-              <role>release manager</role>
-            </roles>
-            <timezone>-4</timezone>
-        </developer>
+            <developer>
+                <id>niels</id>
+                <name>Niels Ganser</name>
+                <email>niels@herimedia.com</email>
+                <organization>herimedia e.K., Köln</organization>
+                <organizationUrl>https://herimedia.com</organizationUrl>
+                <roles>
+                  <role>developer</role>
+                </roles>
+                <timezone>+1</timezone>
+            </developer>
 	</developers>
 	<contributors>
 	</contributors>
