@@ -34,3 +34,8 @@ authentication as user `user` with password `password`:
   <typeName>crawler_type</typeName>
 </committer>
 ```
+
+## Status
+
+Though we are using this library in production, it is not currently
+tested by an automated test suite. Use with caution!
