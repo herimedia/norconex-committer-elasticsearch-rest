@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.norconex.committer.elasticsearch;
+package com.norconex.committer.elasticsearch_rest;
 
 import static org.elasticsearch.common.xcontent.XContentFactory.jsonBuilder;
 
@@ -54,7 +54,7 @@ import com.norconex.commons.lang.map.Properties;
  * </p>
  * 
  * <pre>
- *  &lt;committer class="com.norconex.committer.elasticsearch.ElasticsearchCommitter"&gt;
+ *  &lt;committer class="com.norconex.committer.elasticsearch_rest.ElasticsearchCommitter"&gt;
  *      &lt;indexName&gt;(Name of the index to use)&lt;/indexName&gt;
  *      &lt;typeName&gt;(Name of the type to use)&lt;/typeName&gt;
  *      &lt;clusterName&gt;

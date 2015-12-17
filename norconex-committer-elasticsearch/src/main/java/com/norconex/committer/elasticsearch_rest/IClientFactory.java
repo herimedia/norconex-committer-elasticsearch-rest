@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.norconex.committer.elasticsearch;
+package com.norconex.committer.elasticsearch_rest;
 
 import org.elasticsearch.client.Client;
 

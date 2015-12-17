@@ -20,7 +20,7 @@
 	<groupId>com.norconex.collectors</groupId>
 	<artifactId>norconex-committer-elasticsearch</artifactId>
 	<version>2.0.1</version>
-	<name>Norconex Committer Elasticsearch</name>
+	<name>Norconex Committer Elasticsearch REST</name>
 
 
 	<properties>
@@ -75,7 +75,7 @@
 		</dependency>
 	</dependencies>
 
-	<description>Elasticsearch implementation of Norconex Committer.</description>
+	<description>Elasticsearch implementation of Norconex Committer using the REST interface.</description>
 	<build>
         <resources>
             <resource>

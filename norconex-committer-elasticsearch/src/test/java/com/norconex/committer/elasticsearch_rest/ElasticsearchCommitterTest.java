@@ -12,8 +12,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.norconex.committer.elasticsearch;
+package com.norconex.committer.elasticsearch_rest;
 
+import com.norconex.committer.elasticsearch_rest.ElasticsearchCommitter;
+import com.norconex.committer.elasticsearch_rest.IClientFactory;
 import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
