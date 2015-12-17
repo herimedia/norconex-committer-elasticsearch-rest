@@ -1,4 +1,4 @@
-/* Copyright 2013-2014 Norconex Inc.
+/*
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,22 +14,20 @@
  */
 package com.norconex.committer.elasticsearch_rest;
 
-import org.elasticsearch.client.Client;
+import io.searchbox.client.JestClient;
 
 /**
- * Factory for Elasticsearch {@link Client}.
- * 
- * @author Pascal Dimassimo
+ * Factory for Elasticsearch {@link JestClient}.
  */
 public interface IClientFactory {
 
     /**
      * Creates a client
-     * 
+     *
      * @param committer
      *            committer object (used to get properties needed for building
      *            the client)
-     * @return {@link Client}
+     * @return {@link JestClient}
      */
-    Client createClient(ElasticsearchCommitter committer);
+    JestClient createClient(ElasticsearchCommitter committer);
 }

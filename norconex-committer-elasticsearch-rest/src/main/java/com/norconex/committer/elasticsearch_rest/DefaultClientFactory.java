@@ -1,4 +1,4 @@
-/* Copyright 2013-2014 Norconex Inc.
+/*
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,34 +14,28 @@
  */
 package com.norconex.committer.elasticsearch_rest;
 
-import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
-
-import org.apache.commons.lang3.StringUtils;
-import org.elasticsearch.client.Client;
-import org.elasticsearch.node.Node;
-import org.elasticsearch.node.NodeBuilder;
+import io.searchbox.client.JestClient;
+import io.searchbox.client.JestClientFactory;
+import io.searchbox.client.config.HttpClientConfig;
 
 /**
- * 
- * Implementation that creates a client that does not hold any data.
- * 
- * @see <a href="http://www.elasticsearch.org/guide/reference/java-api/client/">
- * http://www.elasticsearch.org/guide/reference/java-api/client/</a>
- * 
- * @author Pascal Dimassimo
- * 
+ *
+ * Returns a JestClient for the Elasticsearch host at serverUrl.
+ *
+ * @see <a href="https://github.com/searchbox-io/Jest/blob/master/jest/README.md">
+ * https://github.com/searchbox-io/Jest/blob/master/jest/README.md</a>
+ *
  */
 public class DefaultClientFactory implements IClientFactory {
 
     @Override
-    public Client createClient(ElasticsearchCommitter committer) {
-        NodeBuilder builder;
-        if (StringUtils.isNotBlank(committer.getClusterName())) {
-            builder = nodeBuilder().clusterName(committer.getClusterName());
-        } else {
-            builder = nodeBuilder();
-        }
-        Node node = builder.client(true).node();
-        return node.client();
+    public JestClient createClient(ElasticsearchCommitter committer) {
+        JestClientFactory factory = new JestClientFactory();
+        factory.setHttpClientConfig(new HttpClientConfig
+                .Builder(committer.getServerUrl())
+                .multiThreaded(true)
+                .build());
+
+        return factory.getObject();
     }
 }

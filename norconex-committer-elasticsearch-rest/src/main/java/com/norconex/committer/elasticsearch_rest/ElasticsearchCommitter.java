@@ -1,4 +1,4 @@
-/* Copyright 2013-2014 Norconex Inc.
+/*
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,11 +14,11 @@
  */
 package com.norconex.committer.elasticsearch_rest;
 
-import static org.elasticsearch.common.xcontent.XContentFactory.jsonBuilder;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
@@ -30,13 +30,6 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
-import org.elasticsearch.action.ListenableActionFuture;
-import org.elasticsearch.action.bulk.BulkRequestBuilder;
-import org.elasticsearch.action.bulk.BulkResponse;
-import org.elasticsearch.action.delete.DeleteRequestBuilder;
-import org.elasticsearch.action.index.IndexRequestBuilder;
-import org.elasticsearch.client.Client;
-import org.elasticsearch.common.xcontent.XContentBuilder;
 
 import com.norconex.committer.core.AbstractMappedCommitter;
 import com.norconex.committer.core.CommitterException;
@@ -45,6 +38,12 @@ import com.norconex.committer.core.ICommitOperation;
 import com.norconex.committer.core.IDeleteOperation;
 import com.norconex.commons.lang.map.Properties;
 
+import io.searchbox.client.JestClient;
+import io.searchbox.client.JestResult;
+import io.searchbox.core.Bulk;
+import io.searchbox.core.Delete;
+import io.searchbox.core.Index;
+
 /**
  * Commits documents to Elasticsearch.  Despite being a subclass
  * of {@link AbstractMappedCommitter}, setting an <code>idTargetField</code>
@@ -52,24 +51,24 @@ import com.norconex.commons.lang.map.Properties;
  * <p>
  * XML configuration usage:
  * </p>
- * 
+ *
  * <pre>
  *  &lt;committer class="com.norconex.committer.elasticsearch_rest.ElasticsearchCommitter"&gt;
  *      &lt;indexName&gt;(Name of the index to use)&lt;/indexName&gt;
  *      &lt;typeName&gt;(Name of the type to use)&lt;/typeName&gt;
- *      &lt;clusterName&gt;
- *         (Name of the ES cluster. Use if you have multiple clusters.)
- *      &lt;/clusterName&gt;
+ *      &lt;serverUrl&gt;
+ *         (The full URL to the elasticsearch server.)
+ *      &lt;/serverUrl&gt;
  *      &lt;sourceReferenceField keep="[false|true]"&gt;
- *         (Optional name of field that contains the document reference, when 
+ *         (Optional name of field that contains the document reference, when
  *         the default document reference is not used.  The reference value
- *         will be mapped to the Elasticsearch ID field. 
- *         Once re-mapped, this metadata source field is 
+ *         will be mapped to the Elasticsearch ID field.
+ *         Once re-mapped, this metadata source field is
  *         deleted, unless "keep" is set to <code>true</code>.)
  *      &lt;/sourceReferenceField&gt;
  *      &lt;sourceContentField keep="[false|true]"&gt;
- *         (If you wish to use a metadata field to act as the document 
- *         "content", you can specify that field here.  Default 
+ *         (If you wish to use a metadata field to act as the document
+ *         "content", you can specify that field here.  Default
  *         does not take a metadata field but rather the document content.
  *         Once re-mapped, the metadata source field is deleted,
  *         unless "keep" is set to <code>true</code>.)
@@ -87,9 +86,6 @@ import com.norconex.commons.lang.map.Properties;
  *      &lt;maxRetryWait&gt;(max delay between retries)&lt;/maxRetryWait&gt;
  *  &lt;/committer&gt;
  * </pre>
- * 
- * @author Pascal Dimassimo
- * @author Pascal Essiembre
  */
 public class ElasticsearchCommitter extends AbstractMappedCommitter {
 
@@ -99,8 +95,8 @@ public class ElasticsearchCommitter extends AbstractMappedCommitter {
     public static final String DEFAULT_ES_CONTENT_FIELD = "content";
 
     private final IClientFactory clientFactory;
-    private Client client;
-    private String clusterName;
+    private JestClient client;
+    private String serverUrl;
     private String indexName;
     private String typeName;
 
@@ -124,18 +120,18 @@ public class ElasticsearchCommitter extends AbstractMappedCommitter {
     }
 
     /**
-     * Gets the cluster name.
-     * @return the cluster name
+     * Gets the server url.
+     * @return the server url
      */
-    public String getClusterName() {
-        return clusterName;
+    public String getServerUrl() {
+        return serverUrl;
     }
     /**
-     * Sets the cluster name.
-     * @param clusterName the cluster name
+     * Sets the server url.
+     * @param serverUrl the server url
      */
-    public void setClusterName(String clusterName) {
-        this.clusterName = clusterName;
+    public void setServerUrl(String serverUrl) {
+        this.serverUrl = serverUrl;
     }
 
     /**
@@ -177,36 +173,35 @@ public class ElasticsearchCommitter extends AbstractMappedCommitter {
             throw new CommitterException("Type name is undefined.");
         }
         LOG.info("Sending " + batch.size() + " operations to Elasticsearch.");
-        
+
         if (client == null) {
             client = clientFactory.createClient(this);
         }
 
-        List<IAddOperation> additions = new ArrayList<IAddOperation>();
-        List<IDeleteOperation> deletions = new ArrayList<IDeleteOperation>();
+        List<IAddOperation> additions = new ArrayList<>();
+        List<IDeleteOperation> deletions = new ArrayList<>();
         for (ICommitOperation op : batch) {
             if (op instanceof IAddOperation) {
-                additions.add((IAddOperation) op); 
+                additions.add((IAddOperation) op);
             } else if (op instanceof IDeleteOperation) {
-                deletions.add((IDeleteOperation) op); 
+                deletions.add((IDeleteOperation) op);
             } else {
                 throw new CommitterException("Unsupported operation:" + op);
             }
         }
         try {
             bulkDeletedDocuments(deletions);
-            bulkAddedDocuments(additions);            
+            bulkAddedDocuments(additions);
             LOG.info("Done sending operations to Elasticsearch.");
         } catch (IOException e) {
             throw new CommitterException(
                     "Cannot index document batch to Elasticsearch.", e);
         }
     }
-    
+
     /**
-     * Add all queued documents to add to a {@link BulkRequestBuilder}
-     * 
-     * @param bulkRequest
+     * Add all queued documents to add to a {@link Bulk.Builder}
+     *
      * @throws IOException
      */
     private void bulkAddedDocuments(List<IAddOperation> addOperations)
@@ -214,64 +209,79 @@ public class ElasticsearchCommitter extends AbstractMappedCommitter {
         if (addOperations.isEmpty()) {
             return;
         }
-        BulkRequestBuilder bulkRequest = client.prepareBulk();
+
+        Bulk.Builder bulkRequest = new Bulk.Builder();
+
         for (IAddOperation op : addOperations) {
-            IndexRequestBuilder request = 
-                    client.prepareIndex(getIndexName(), getTypeName());
             String id = op.getMetadata().getString(getSourceReferenceField());
             if (StringUtils.isBlank(id)) {
                 id = op.getReference();
             }
-            request.setId(id);
-            request.setSource(buildSourceContent(op.getMetadata()));
-            bulkRequest.add(request);
+
+            Index request = new Index.Builder(buildSourceContent(op.getMetadata()))
+                    .index(getIndexName())
+                    .type(getTypeName())
+                    .id(id)
+                    .build();
+
+            bulkRequest.addAction(request);
         }
+
         sendBulkToES(bulkRequest);
     }
-    private XContentBuilder buildSourceContent(Properties fields)
+
+    private Map buildSourceContent(Properties fields)
             throws IOException {
-        XContentBuilder builder = jsonBuilder().startObject();
+        Map<String, String> doc = new HashMap<>();
+
         for (String key : fields.keySet()) {
             // Remove id from source unless specified to keep it
             if (!isKeepSourceReferenceField() && key.equals(getSourceReferenceField())) {
                 continue;
             }
+
             List<String> values = fields.getStrings(key);
             for (String value : values) {
-                builder.field(key, value);
+                doc.put(key, value);
             }
         }
-        return builder.endObject();
-    }
-    
 
-    private void bulkDeletedDocuments(List<IDeleteOperation> deleteOperations) {
+        return doc;
+    }
+
+    private void bulkDeletedDocuments(List<IDeleteOperation> deleteOperations)
+            throws IOException {
         if (deleteOperations.isEmpty()) {
             return;
         }
-        BulkRequestBuilder bulkRequest = client.prepareBulk();
+
+        Bulk.Builder bulkRequest = new Bulk.Builder();
         for (IDeleteOperation op : deleteOperations) {
-            DeleteRequestBuilder request = client.prepareDelete(
-                    indexName, typeName, op.getReference());
-            bulkRequest.add(request);
+            Delete request = new Delete.Builder(op.getReference())
+                    .index(getIndexName())
+                    .type(getTypeName())
+                    .build();
+
+            bulkRequest.addAction(request);
         }
+
         sendBulkToES(bulkRequest);
     }
 
 
     /**
-     * Send {@link BulkRequestBuilder} to ES
-     * 
+     * Send {@link Bulk.Builder} to ES
+     *
      * @param bulkRequest
      */
-    private void sendBulkToES(BulkRequestBuilder bulkRequest) {
-        ListenableActionFuture<BulkResponse> execution = bulkRequest.execute();
-        
-        BulkResponse bulkResponse = execution.actionGet();
-        if (bulkResponse.hasFailures()) {
+    private void sendBulkToES(Bulk.Builder bulkRequest)
+            throws IOException {
+        JestResult bulkResponse = client.execute(bulkRequest.build());
+
+        if (!bulkResponse.isSucceeded()) {
             throw new CommitterException(
                     "Cannot index document batch to Elasticsearch: "
-                            + bulkResponse.buildFailureMessage());
+                            + bulkResponse.getErrorMessage());
         }
     }
 
@@ -279,8 +289,8 @@ public class ElasticsearchCommitter extends AbstractMappedCommitter {
     @Override
     protected void saveToXML(XMLStreamWriter writer) throws XMLStreamException {
 
-        writer.writeStartElement("clusterName");
-        writer.writeCharacters(clusterName);
+        writer.writeStartElement("serverUrl");
+        writer.writeCharacters(serverUrl);
         writer.writeEndElement();
 
         writer.writeStartElement("indexName");
@@ -304,7 +314,7 @@ public class ElasticsearchCommitter extends AbstractMappedCommitter {
         } else {
             setTargetContentField(DEFAULT_ES_CONTENT_FIELD);
         }
-        setClusterName(xml.getString("clusterName", null));
+        setServerUrl(xml.getString("serverUrl", null));
         setIndexName(xml.getString("indexName", null));
         setTypeName(xml.getString("typeName", null));
     }
@@ -312,7 +322,7 @@ public class ElasticsearchCommitter extends AbstractMappedCommitter {
     @Override
     public int hashCode() {
         return new HashCodeBuilder().appendSuper(super.hashCode())
-                .append(clusterName).append(indexName)
+                .append(serverUrl).append(indexName)
                 .append(typeName).toHashCode();
     }
 
@@ -329,7 +339,7 @@ public class ElasticsearchCommitter extends AbstractMappedCommitter {
         }
         ElasticsearchCommitter other = (ElasticsearchCommitter) obj;
         return new EqualsBuilder().appendSuper(super.equals(obj))
-                .append(clusterName, other.clusterName)
+                .append(serverUrl, other.serverUrl)
                 .append(indexName, other.indexName)
                 .append(typeName, other.typeName).isEquals();
     }
@@ -338,7 +348,7 @@ public class ElasticsearchCommitter extends AbstractMappedCommitter {
     public String toString() {
         return new ToStringBuilder(this).appendSuper(super.toString())
                 .append("clientFactory", clientFactory)
-                .append("client", client).append("clusterName", clusterName)
+                .append("client", client).append("serverUrl", serverUrl)
                 .append("indexName", indexName).append("typeName", typeName)
                 .toString();
     }
