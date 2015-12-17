@@ -77,12 +77,6 @@
 	<build>
         <resources>
             <resource>
-                <directory>${project.build.testSourceDirectory}</directory>
-                <includes>
-                    <include>**</include>
-                </includes>
-            </resource>
-            <resource>
                 <filtering>false</filtering>
                 <directory>${project.build.sourceDirectory}</directory>
                 <includes>
