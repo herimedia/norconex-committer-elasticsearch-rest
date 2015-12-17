@@ -1,18 +1,21 @@
-ElasticSearch Committer (REST interface)
-========================================
+# ElasticSearch Committer (REST interface)
 
-Elasticsearch implementation of Norconex Committer using the
-Elasticsearch REST interface.
+## Introduction
 
-This is an alternative implementation of
-https://github.com/Norconex/committer-elasticsearch
-(http://www.norconex.com/collectors/committer-elasticsearch) which uses
-the Elasticsearch Node client instead.
+Elasticsearch implementation of Norconex Committer using the Elasticsearch REST interface.
 
-The benefits of the REST interface are native support drop-in HTTP
-proxies and caches, HTTPS encryption, and HTTP authentication.
+This is an alternative implementation of [Norconex/committer-elasticsearch](https://github.com/Norconex/committer-elasticsearch) (http://www.norconex.com/collectors/committer-elasticsearch) which uses the [Elasticsearch Node client](https://www.elastic.co/guide/en/elasticsearch/client/java-api/current/node-client.html) instead.
 
-This committer is based on the [Jest library](https://github.com/searchbox-io/Jest).
+The [benefits of the REST interface](https://github.com/searchbox-io/Jest#comparison-to-native-api) are i.a. native support of drop-in HTTP proxies and caches, as well as the option to use HTTPS encryptio and/or HTTP authentication.
+
+This committer uses the [Jest library](https://github.com/searchbox-io/Jest) as the Elasticsearch client.
+
+## Status
+
+Though we are using this library in production, it is not currently
+tested by an automated test suite. Proceed with caution!
+
+## Usage / Configuration
 
 The configuration is analogous to
 http://www.norconex.com/collectors/committer-elasticsearch/configuration
@@ -23,7 +26,7 @@ This URL must point to an elasticsearch REST interface and may either
 use the http or https schema and may optionally include HTTP
 authentication information. E.g., the following configuration would
 initiate an encrypted connection to an ES instance at `search.example.com`
-authentication as user `user` with password `password`:
+authenticating as user `user` with password `password`:
 
 ```xml
 <committer
@@ -34,8 +37,3 @@ authentication as user `user` with password `password`:
   <typeName>crawler_type</typeName>
 </committer>
 ```
-
-## Status
-
-Though we are using this library in production, it is not currently
-tested by an automated test suite. Use with caution!
