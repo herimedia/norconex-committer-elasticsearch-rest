@@ -2,60 +2,17 @@
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://maven.apache.org/changes/1.0.0 http://maven.apache.org/xsd/changes-1.0.0.xsd">
   <properties>
-    <title>Norconex Elasticsearch Committer Project</title>
-    <author email="info@norconex.com">Norconex Inc.</author>
+    <title>Norconex Elasticsearch REST Committer Project</title>
+    <author email="bonjour@herimedia.com">herimedia e.K., Köln</author>
   </properties>
   <body>
-
-    <release version="2.0.1" date="2015-03-31" description="Maintenance release">
-      <action dev="dimassip" type="fix">
-        Fixed unstable unit tests.
+ 
+    <release version="0.0.1" date="2015-12-17" description="Alpha release">
+      <action dev="niels" type="add">
+        Switch from Node to Jest client.
       </action>
-      <action dev="essiembre" type="update">
-        Updated several maven plugins and added SonarQube maven plugin.
-      </action>
-      <action dev="essiembre" type="update">
-        Library updates: Elasticsearch API 1.5.0, Norconex Committer Core 2.0.1,
-        JUnit 4.12, Apache Commons Codec 1.10.
-      </action>
-      <action dev="essiembre" type="update">
-        Added Sonatype repository to pom.xml for snapshot releases.
-      </action>
-    </release>
-
-    <release version="2.0.0" date="2014-11-25" description="Major release">
-      <action dev="essiembre" type="update">
-        Now licensed under The Apache License, Version 2.0.
-      </action>
-      <action dev="essiembre" type="update">
-        Upgraded to work with Norconex Committer 2.0.0 (won't work with 
-        older versions).
-      </action>
-      <action dev="essiembre" type="update">
-        Document "id" is now referred as document "reference".
-      </action>
-      <action dev="essiembre" type="update">
-        Now requires Java 7 or higher.
-      </action>
-    </release>
-  
-    <release version="1.0.0" date="2014-03-09" description="Stable release">
-      <action dev="essiembre" type="add">
-        Can now retry on commit failures and specify a delay between retries.
-      </action>
-      <action dev="essiembre" type="update">
-        Upgraded to Committer version 1.2.0 and refactored code accordingly.
-      </action>
-      <action dev="essiembre" type="update">
-        "batchSize configuration option has been renamed to "queueSize".
-        "solrBatchSize" configuration options has been renamed to 
-        "committerBatchSize".
-      </action>
-    </release>
-
-    <release version="1.0.0-RC1" date="2013-06-05" description="Open Source release">
-      <action dev="dimassip" type="add">
-        Starting with this release, Norconex Elasticsearch Committer is open-source under GPL.
+      <action dev="niels" type="add">
+        Fork Norconex/committer-elasticsearch.
       </action>
     </release>
 
