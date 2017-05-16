@@ -1,5 +1,9 @@
 # ElasticSearch Committer (REST interface)
 
+## :warning: Deprecation notice
+
+Starting with version 4.0, the upstream [Norconex/committer-elasticsearch](https://github.com/Norconex/committer-elasticsearch) has switched to using the Elasticsearch REST interface as well; rendering this committer obsolete. I continue accepting bug fixes but would suggest users eventually migrate to https://www.norconex.com/collectors/committer-elasticsearch which is already more feature-complete and which I expect to continue being better maintained. (This repository will remain online indefinitely as an archive.)
+
 ## Introduction
 
 Elasticsearch implementation of Norconex Committer using the Elasticsearch REST interface.
